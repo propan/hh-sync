@@ -1,4 +1,4 @@
-(defproject hh-sync "0.0.1"
+(defproject hh-sync "0.0.2-SNAPSHOT"
   :description "a command-line utility for syncing workouts from Endomondo to HeiaHeia"
   :url "https://github.com/propan/hh-sync"
   :license {:name "Eclipse Public License"
