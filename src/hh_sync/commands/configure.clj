@@ -27,4 +27,5 @@
         heiaheia-cred  (prompt-credentials "HeiaHeia" heiaheia/valid-credentials?)]
     (config/save-config {:endomondo endomondo-cred
                          :heiaheia  heiaheia-cred
-                         :last-sync nil})))
+                         :last-sync nil})
+    (exit 0 "Configuration has completed. Run hh-sync --sync")))

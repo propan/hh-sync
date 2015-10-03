@@ -9,10 +9,10 @@
   (when-not (config/valid? settings)
     (exit 1 "Configuration file is corrupted. Please run hh-sync --configure."))
 
-  (println "sync"))
+  (exit 0 "Syncing has completed."))
 
 (defn sync-workouts
-  []
+  [interactive]
   (when-not (config/exists?)
     (exit 1 "Could not find configuration file. Please run hh-sync --configure."))
 

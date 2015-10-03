@@ -8,7 +8,9 @@
 
 (def cli-options
   [["-c" "--configure" "Configure hh-sync"]
-   ["-s" "--sync" "Run syncronization"]
+   ["-s" "--sync" "Sync workouts to HeiaHeia"]
+   ["-i" "--interactive" "You will be prompt about need of syncing of every workout fetched from Endomondo"
+    :default false]
    ["-h" "--help"]])
 
 (defn error-msg [errors]
@@ -17,7 +19,11 @@
 
 (defn usage
   [options-summary]
-  (->> ["Options:"
+  (->> ["hh-sync - a command-line utility for syncing workouts from Endomondo to HeiaHeia"
+        ""
+        "Exmaple: hh-sync --sync --interactive"
+        ""
+        "Options:"
         options-summary
         ""]
        (string/join \newline)))
@@ -25,14 +31,15 @@
 (defn -main
   [& args]
   (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
-    (cond
-      (:help options)          (exit 0 (usage summary))
-      (not= (count options) 1) (exit 1 (usage summary))
-      errors                   (exit 1 (error-msg errors)))
+    (when errors
+      (exit 1 (error-msg errors)))
+
+    (when (:help options)
+      (exit 0 (usage summary)))
 
     (when (:configure options)
       (configure))
     
     (when (:sync options)
-      (sync-workouts))))
+      (sync-workouts (:interactive options)))))
 
