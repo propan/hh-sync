@@ -13,7 +13,10 @@
 
 (defn save-config
   [config]
-  (spit CONFIG_FILE (with-out-str (pr config))))
+  (->> (pr config)
+       (with-out-str)
+       (spit CONFIG_FILE))
+  config)
 
 (defn valid?
   [config]

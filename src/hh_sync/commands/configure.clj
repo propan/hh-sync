@@ -25,7 +25,7 @@
 
   (let [endomondo-cred (prompt-credentials "Endomondo" endomondo/valid-credentials?)
         heiaheia-cred  (prompt-credentials "HeiaHeia" heiaheia/valid-credentials?)]
-    (config/save-config {:endomondo endomondo-cred
-                         :heiaheia  heiaheia-cred
-                         :last-sync nil})
+    (config/save-config {:endomondo   endomondo-cred
+                         :heiaheia    heiaheia-cred
+                         :last-synced nil})
     (exit 0 "Configuration has completed. Run hh-sync --sync")))

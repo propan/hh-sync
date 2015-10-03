@@ -26,8 +26,8 @@
     {:h (int h) :m (int m) :s (java.lang.Math/round lm)}))
 
 (defn- format-date
-  [s]
-  (-> HH_DATE_FORMAT (java.text.SimpleDateFormat.) (.format s)))
+  [date]
+  (-> HH_DATE_FORMAT (java.text.SimpleDateFormat.) (.format date)))
 
 (defn- parse-login-form
   [page]
@@ -49,6 +49,10 @@
   (let [response (client/post HH_AUTHENTICATE {:form-params  form
                                                :cookie-store cookie-store})]
     (= (:status response) 302)))
+
+(defn get-or
+  [xs k d]
+  (if-let [v (get xs k)] v d))
 
 (defn create-session
   [username password]
@@ -72,7 +76,7 @@
       false)))
 
 (defn create-workout
-  [workout session]
+  [session workout]
   (let [duration (parse-duration (:duration workout))
         response (client/post HH_WORKOUTS {:form-params  {"utf8"                     "✓"
                                                           "authenticity_token"       (:token session)
@@ -81,10 +85,10 @@
                                                           "training_log[duration_h]" (:h duration)
                                                           "training_log[duration_m]" (:m duration)
                                                           "training_log[duration_s]" (:s duration)
-                                                          "training_log[distance]"   (:distance workout)
-                                                          "training_log[calories]"   (:calories workout)
-                                                          "training_log[avg_hr]"     (:heart-rate-avg workout)
-                                                          "training_log[max_hr]"     (:heart-rate-max workout)
+                                                          "training_log[distance]"   (get-or workout :distance 0)
+                                                          "training_log[calories]"   (get-or workout :calories 0)
+                                                          "training_log[avg_hr]"     (get-or workout :heart-rate-avg 0)
+                                                          "training_log[max_hr]"     (get-or workout :heart-rate-max 0)
                                                           "training_log[favourite]"  false
                                                           "button"                   ""}
                                            :cookie-store (:cookies session)})]
