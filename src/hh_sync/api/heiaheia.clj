@@ -63,6 +63,14 @@
        :cookies cookie-store}
       (throw (Exception. "Incorrect HeiaHeia credentials")))))
 
+(defn valid-credentials?
+  [username password]
+  (try
+    (create-session username password)
+    true
+    (catch Exception e
+      false)))
+
 (defn create-workout
   [workout session]
   (let [duration (parse-duration (:duration workout))

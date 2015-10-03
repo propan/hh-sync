@@ -71,6 +71,14 @@
        :cookies cookie-store}
       (throw (Exception. "Incorrect Endomondo credentials.")))))
 
+(defn valid-credentials?
+  [username password]
+  (try
+    (create-session username password)
+    true
+    (catch Exception e
+      false)))
+
 (defn get-workouts
   [session & {:keys [maxResults before] :or {maxResults 20}}]
   (let [response (client/get E_WORKOUTS {:query-params {:authToken  (:token session)
