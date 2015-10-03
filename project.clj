@@ -8,6 +8,7 @@
                  [cheshire "5.5.0"]
                  [enlive "1.1.6"]
                  [org.clojure/tools.cli "0.3.3"]]
+  :deploy-repositories [["releases" :clojars {:creds :gpg}]]
   :main ^:skip-aot hh-sync.app
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
