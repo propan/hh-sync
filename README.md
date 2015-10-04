@@ -4,7 +4,7 @@ a command-line utility for syncing workouts from Endomondo to HeiaHeia
 
 ## Important!
 
-The unitility does ask you to provide Endomondo and HeiaHeia credentials. They are sent only to Endomodo and HeiaHeia using HTTPS connection ans stored locally. But, when given, they are stored in plain text in `.hh-sync` file within the working directory. **Make sure you keep that file safe.**
+The unitility does ask you to provide Endomondo and HeiaHeia credentials. They are sent only to Endomodo and HeiaHeia using HTTPS connection and stored locally. But, when given, they are stored in plain text in `.hh-sync` file within the working directory. **Make sure you keep that file safe.**
 
 ## Good to know
 
