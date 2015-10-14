@@ -5,10 +5,65 @@
            [java.util UUID]))
 
 (def ENDOMONDO_SPORTS
-  {0 :running
-   1 :cycling-transport
-   2 :cycling-sport
-   3 :mountain-biking})
+  {0  :running
+   1  :cycling-transport
+   2  :cycling-sport
+   3  :mountain-biking
+   4  :skating
+   5  :roller-skiing
+   6  :skiing-cross-country
+   7  :skiing-downhill
+   8  :snowboarding
+   9  :kayaking
+   10 :kite-surfing
+   11 :rowing
+   12 :sailing
+   13 :windsurfing
+   14 :fitness-walking
+   15 :golfing
+   16 :hiking
+   17 :orienteering
+   18 :walking
+   19 :riding
+   20 :swimming
+   21 :indoor-cycling
+   22 :other
+   23 :aerobics
+   24 :badminton
+   25 :baseball
+   26 :basketball
+   27 :boxing
+   28 :climbing-stairs
+   29 :cricket
+   30 :elliptical-training
+   31 :dancing
+   32 :fencing
+   33 :american-football
+   34 :rugby
+   35 :soccer
+   36 :handball
+   37 :hockey
+   38 :pilates
+   39 :polo
+   40 :scuba-diving
+   41 :squash
+   42 :table-tennis
+   43 :tennis
+   44 :beach-volleyball
+   45 :indoor-volleyball
+   46 :weight-training
+   47 :yoga
+   48 :martial-arts
+   49 :gymnastics
+   50 :step-counter
+   87 :circuit-training
+   88 :treadmill-running
+   89 :skateboarding
+   90 :surfing
+   91 :snow-shoveling
+   92 :wheelchair
+   93 :climbing
+   94 :treadmill-walking})
 
 (def ENDOMONDO_DATE_FORMAT "yyyy-MM-dd HH:mm:ss z")
 
