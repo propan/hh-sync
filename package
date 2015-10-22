@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e -u
+
+RELEASE_VERSION=$1
+
+git checkout tags/$RELEASE_VERSION
+
+lein do clean, uberjar
+
+RELEASE_JAR=$PWD/target/uberjar/hh-sync-$RELEASE_VERSION-standalone.jar
+RELEASE_PACKAGE=$PWD/target/hh-sync-$RELEASE_VERSION-standalone.zip
+
+mv $RELEASE_JAR $RELEASE_PACKAGE
+
+gpg2 -ab $RELEASE_PACKAGE
+
+echo "Upload $RELEASE_PACKAGE and $RELEASE_PACKAGE.asc to GitHub releases for $RELEASE_VERSION."
+
+git checkout master

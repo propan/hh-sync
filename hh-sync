@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+#
+# Highly inspired by:
+# https://github.com/technomancy/leiningen/blob/master/bin/lein
+#
+
+# Ensure this file is executable via `chmod a+x hh-sync`, then place it
+# somewhere on your $PATH, like ~/bin. The rest of hh-sync will be
+# installed upon first run into the ~/.hh-sync/self-installs directory.
+
+export HH_SYNC_VERSION="0.0.2"
+
+export HH_SYNC_HOME="${HH_SYNC_HOME:-"$HOME/.hh-sync"}"
+
+HH_SYNC_JAR="$HH_SYNC_HOME/self-installs/hh-sync-$HH_SYNC_VERSION-standalone.jar"
+
+function download_failed_message {
+    echo "Failed to download $1 (exit code $2)"
+    echo "It's possible your HTTP client's certificate store does not have the"
+    echo "correct certificate authority needed. This is often caused by an"
+    echo "out-of-date version of libssl. It's also possible that you're behind a"
+    echo "firewall and haven't set HTTP_PROXY and HTTPS_PROXY."
+}
+
+function install {
+    if [ -r "$HH_SYNC_JAR" ]; then
+        echo "The self-install jar already exists at $HH_SYNC_JAR."
+        echo "If you wish to re-download, delete it and rerun \"$0 self-install\"."
+        exit 1
+    fi
+    echo "Downloading hh-sync to $HH_SYNC_JAR now..."
+    mkdir -p "$(dirname "$HH_SYNC_JAR")"
+    DOWNLOAD_URL="https://github.com/propan/hh-sync/releases/download/$HH_SYNC_VERSION/hh-sync-$HH_SYNC_VERSION-standalone.zip"
+    $HTTP_CLIENT "$HH_SYNC_JAR.pending" "$DOWNLOAD_URL"
+    local exit_code=$?
+    if [ $exit_code == 0 ]; then
+        # TODO: checksum
+        # gpg --verify $HH_SYNC_JAR.asc $HH_SYNC_JAR
+        mv -f "$HH_SYNC_JAR.pending" "$HH_SYNC_JAR"
+    else
+        rm "$HH_SYNC_JAR.pending" 2> /dev/null
+        download_failed_message "$DOWNLOAD_URL" "$exit_code"
+        exit 1
+    fi
+}
+
+if [ "$HTTP_CLIENT" = "" ]; then
+    if type -p curl >/dev/null 2>&1; then
+        if [ "$https_proxy" != "" ]; then
+            CURL_PROXY="-x $https_proxy"
+        fi
+        HTTP_CLIENT="curl $CURL_PROXY -f -L -o"
+    else
+        HTTP_CLIENT="wget -O"
+    fi
+fi
+
+if [ ! -r "$HH_SYNC_JAR" ]; then
+    install
+fi
+
+export JAVA_CMD="${JAVA_CMD:-"java"}"
+
+if [ "$1" = "upgrade" ]; then
+    echo "not implemnted yet"
+else
+    $JAVA_CMD -jar $HH_SYNC_JAR $@
+fi
