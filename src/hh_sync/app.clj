@@ -3,7 +3,8 @@
             [clojure.string :as string]
             [hh-sync.cli-utils :refer [exit]]
             [hh-sync.commands.configure :refer [configure]]
-            [hh-sync.commands.sync :refer [sync-workouts]])
+            [hh-sync.commands.sync :refer [sync-workouts]]
+            [hh-sync.commands.version :refer [version]])
   (:gen-class :main true))
 
 (def cli-options
@@ -11,6 +12,7 @@
    ["-s" "--sync" "Sync workouts to HeiaHeia"]
    ["-i" "--interactive" "You will be prompt about need of syncing of every workout fetched from Endomondo"
     :default false]
+   ["-v" "--version" "prints hh-sync version"]
    ["-h" "--help"]])
 
 (defn error-msg [errors]
@@ -36,6 +38,9 @@
 
     (when (:help options)
       (exit 0 (usage summary)))
+
+    (when (:version options)
+      (version))
 
     (when (:configure options)
       (configure))
