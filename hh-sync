@@ -62,8 +62,39 @@ fi
 
 export JAVA_CMD="${JAVA_CMD:-"java"}"
 
+SCRIPT="$0"
+
 if [ "$1" = "upgrade" ]; then
-    echo "not implemnted yet"
+    if [ ! -w "$SCRIPT" ]; then
+        echo "You do not have permission to upgrade the installation in $SCRIPT"
+        exit 1
+    else
+        TARGET_VERSION="${2:-stable}"
+        echo "The script at $SCRIPT will be upgraded to the latest $TARGET_VERSION version."
+        echo -n "Do you want to continue [Y/n]? "
+        read RESP
+        case "$RESP" in
+            y|Y|"")
+                echo
+                echo "Upgrading..."
+                TARGET="/tmp/hh-sync-$$-upgrade"
+                HH_SYNC_SCRIPT_URL="https://github.com/propan/hh-sync/raw/$TARGET_VERSION/hh-sync"
+                $HTTP_CLIENT "$TARGET" "$HH_SYNC_SCRIPT_URL"
+                if [ $? == 0 ]; then
+                    cmp -s "$TARGET" "$SCRIPT"
+                    if [ $? == 0 ]; then
+                        echo "hh-sync is already up-to-date."
+                    fi
+                    mv "$TARGET" "$SCRIPT" && chmod +x "$SCRIPT"
+                    exec "$SCRIPT" version
+                else
+                    download_failed_message "$HH_SYNC_SCRIPT_URL"
+                fi;;
+            *)
+                echo "Aborted."
+                exit 1;;
+        esac
+    fi
 else
     $JAVA_CMD -jar $HH_SYNC_JAR $@
 fi

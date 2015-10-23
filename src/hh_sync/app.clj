@@ -21,7 +21,7 @@
   [options-summary]
   (->> ["hh-sync - a command-line utility for syncing workouts from Endomondo to HeiaHeia"
         ""
-        "Exmaple: hh-sync --sync --interactive"
+        "Example: hh-sync --sync --interactive"
         ""
         "Options:"
         options-summary
@@ -41,5 +41,7 @@
       (configure))
     
     (when (:sync options)
-      (sync-workouts (:interactive options)))))
+      (sync-workouts (:interactive options)))
+
+    (exit 0 (usage summary))))
 
