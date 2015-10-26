@@ -16,10 +16,15 @@
                          (io/file (System/getProperty "user.home") ".hh-sync"))]
     (.getAbsolutePath (doto hh-sync-home .mkdirs))))
 
+(defn- config-file-location
+  "Return full path to the configuration file."
+  []
+  (str (home-directory) "/" CONFIG_FILE))
+
 (defn load-config
   []
   (try
-    (with-open [r (io/reader (str (home-directory) "/" CONFIG_FILE))]
+    (with-open [r (io/reader (config-file-location))]
       (read (java.io.PushbackReader. r)))
     (catch Exception e
       nil)))
@@ -28,7 +33,7 @@
   [config]
   (->> (pr config)
        (with-out-str)
-       (spit CONFIG_FILE))
+       (spit (config-file-location)))
   config)
 
 (defn valid?
@@ -40,6 +45,6 @@
 
 (defn exists?
   []
-  (let [config-file (io/file (str (home-directory) "/" CONFIG_FILE))]
+  (let [config-file (io/file (config-file-location))]
     (and (.exists config-file)
          (.canRead config-file))))
