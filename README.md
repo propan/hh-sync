@@ -26,13 +26,13 @@ The unitility does ask you to provide Endomondo and HeiaHeia (or Facebook) crede
     
 ## Usage
 
-1. Configure the CLI tool
+Configure the CLI tool
 
 ```lang=bash
 hh-sync --configure
 ```
 
-2. Sync workouts
+Sync workouts
 
 ```lang=bash
 hh-sync --sync
