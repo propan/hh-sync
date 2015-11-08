@@ -127,9 +127,9 @@
       (throw (Exception. "Incorrect Endomondo credentials.")))))
 
 (defn valid-credentials?
-  [username password]
+  [credentials]
   (try
-    (create-session username password)
+    (create-session credentials)
     true
     (catch Exception e
       false)))
