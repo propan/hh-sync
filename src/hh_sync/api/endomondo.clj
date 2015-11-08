@@ -135,10 +135,10 @@
       false)))
 
 (defn get-workouts
-  [session & {:keys [maxResults before] :or {maxResults 20}}]
+  [session & {:keys [max-results before] :or {max-results 20}}]
   (let [response (client/get E_WORKOUTS {:query-params {:authToken  (:token session)
                                                         :language   "en"
-                                                        :maxResults maxResults
+                                                        :maxResults max-results
                                                         :fields     (clojure.string/join "," ["device" "simple" "basic" "lcp_count"])}
                                          :cookie-store (:cookies session)
                                          :as           :json})]

@@ -41,14 +41,14 @@
   (set-synced! settings (:id workout)))
 
 (defn- perform-sync
-  [settings interactive]
+  [settings interactive depth]
   (when-not (config/valid? settings)
     (exit 1 "Configuration file is corrupted. Please run hh-sync --configure."))
 
   (let [es (create-session endomondo/create-session (:endomondo settings))
         hs (create-session heiaheia/create-session (:heiaheia settings))]
     (try
-      (let [workouts (endomondo/get-workouts es)
+      (let [workouts (endomondo/get-workouts es :max-results depth)
             workouts (find-workouts-to-sync workouts (:last-synced settings))]
         (when-not (seq workouts)
           (exit 0 "Everything is in sync."))
@@ -69,11 +69,11 @@
   (exit 0 "Syncing has completed."))
 
 (defn sync-workouts
-  [interactive]
+  [interactive depth]
   (when-not (config/exists?)
     (exit 1 "Could not find configuration file. Please run hh-sync --configure."))
 
   (if-let [settings (config/load-config)]
-    (perform-sync settings interactive)
+    (perform-sync settings interactive depth)
     (exit 1 "Configuration file is corrupted. Please run hh-sync --configure.")))
 

@@ -12,6 +12,10 @@
    ["-s" "--sync" "Sync workouts to HeiaHeia"]
    ["-i" "--interactive" "You will be prompt about need of syncing of every workout fetched from Endomondo"
     :default false]
+   ["-d" "--depth DEPTH" "the depth of new workout lookup"
+    :default 20
+    :parse-fn #(Integer/parseInt %)
+    :validate [#(< 20 % 151) "the depth must be a number between 20 and 150"]]
    ["-v" "--version" "prints hh-sync version"]
    ["-h" "--help"]])
 
@@ -46,7 +50,7 @@
       (configure))
     
     (when (:sync options)
-      (sync-workouts (:interactive options)))
+      (sync-workouts (:interactive options) (:depth options)))
 
     (exit 0 (usage summary))))
 

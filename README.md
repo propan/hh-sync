@@ -10,7 +10,7 @@ The unitility does ask you to provide Endomondo and HeiaHeia (or Facebook) crede
 
  - You can run syncing in interactive mode using `--interactive` flag. When provided, you will be asked to confirm syncing of every workout detected to be new.
 
- - The untility searches new workouts only within a window of last 20 workouts.
+ - By default, the untility searches new workouts only within a window of last 20 workouts. You can change that behaviour by giving `--depth` option.
 
 ## Installation
 
