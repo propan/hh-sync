@@ -5,15 +5,15 @@
             [hh-sync.cli-utils :refer [exit prompt]]))
 
 (defn- create-session
-  [construct-fn {:keys [username password]}]
+  [construct-fn options]
   (try
-    (construct-fn username password)
+    (construct-fn options)
     (catch Exception e
       (exit 1 (str (.getMessage e) "\n Please run hh-sync --configure again.")))))
 
 (defn- find-workouts-to-sync
   [workouts last-synced]
-  ;; is really a way?
+  ;; is it really a way?
   (->> workouts
        (sort-by :date)
        (reverse)

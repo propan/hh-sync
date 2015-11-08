@@ -70,6 +70,15 @@
 (def HH_AUTHENTICATE "https://www.heiaheia.com/account/authenticate")
 (def HH_WORKOUTS "https://www.heiaheia.com/training_logs.js")
 
+(def HH_FACEBOOK_LOGIN "https://www.heiaheia.com/facebook_oauth/start")
+
+(def USER_AGENT "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36")
+(def FACEBOOK_URL "https://www.facebook.com")
+
+(defn get-or
+  [xs k d]
+  (if-let [v (get xs k)] v d))
+
 (defn- parse-duration
   [duration]
   (let [lh (mod duration 3600)
@@ -84,41 +93,104 @@
 
 (defn- parse-login-form
   [page]
-  (->> (enlive/select (enlive/html-snippet page) [:form :input])
+  (->> (enlive/select page [:form :input])
        (map :attrs)
        (map #(vector (:name %) (:value %)))
        (into (hash-map))))
 
-(defn- get-login-form
+(defn- parse-form-action
+  [page]
+  (->> (enlive/select page [:form])
+       (first)
+       (:attrs)
+       (:action)))
+
+(defn- find-authenticity-token
+  [response]
+  (as-> (enlive/select (enlive/html-snippet response) [:meta]) elements
+    (filter (fn [tag] (= (-> tag :attrs :name) "csrf-token")) elements)
+    (first elements)
+    (get-in elements [:attrs :content])))
+
+;;
+;; Login via Facebook
+;;
+
+(defn- submit-facebook-login-form
+  [form action cookie-store]
+  (let [response (client/post (str FACEBOOK_URL action)
+                              {:form-params     form
+                               :headers         {"origin"     FACEBOOK_URL
+                                                 "referer"    action
+                                                 "user-agent" USER_AGENT}
+                               :cookies         {"noscript" {:path "/", :value "1"}}
+                               :cookie-store    cookie-store})]
+    (when-not (= (:status response) 302)
+      (throw (Exception. "Facebook authentication failed.")))
+    ;; follow redirect
+    (client/get (get-in response [:headers "Location"])
+                {:headers      {"user-agent" USER_AGENT}
+                 :cookie-store cookie-store})))
+
+(defn- create-session-via-facebook
+  [username password]
+  (let [cookie-store (clj-http.cookies/cookie-store)
+        response     (client/get HH_FACEBOOK_LOGIN {:cookie-store cookie-store})
+        page         (enlive/html-snippet (:body response))
+        action       (parse-form-action page)
+        form         (parse-login-form page)
+        response     (submit-facebook-login-form (assoc form
+                                                        "default_persistent" "0"
+                                                        "email" username
+                                                        "pass" password)
+                                                 action
+                                                 cookie-store)]
+    (if-let [token (find-authenticity-token (:body response))]
+      {:token   token
+       :cookies cookie-store}
+      (throw (Exception. "Could login to HeiaHeia via Facebook.")))))
+
+;;
+;; Login via HeiaHeia form
+;;
+
+(defn- submit-heiaheia-login-form
+  [form cookie-store]
+  (client/post HH_AUTHENTICATE {:form-params  form
+                                :cookie-store cookie-store}))
+
+(defn- get-heiaheia-login-form
   [cookie-store]
   (let [response (client/get HH_LOGIN {:cookie-store cookie-store})
-        form     (parse-login-form (:body response))]
+        page     (enlive/html-snippet (:body response))
+        form     (parse-login-form page)]
     (if-let [token (get form "authenticity_token")]
       form
       (throw (Exception. "Could not find HeiaHeia login form.")))))
 
-(defn- authenticate
-  [form cookie-store]
-  (let [response (client/post HH_AUTHENTICATE {:form-params  form
-                                               :cookie-store cookie-store})]
-    (= (:status response) 302)))
-
-(defn get-or
-  [xs k d]
-  (if-let [v (get xs k)] v d))
-
-(defn create-session
+(defn- create-session-via-form
   [username password]
   (let [cookie-store (clj-http.cookies/cookie-store)
-        login-form   (get-login-form cookie-store)
-        success      (authenticate (assoc login-form
-                                          "user[email]" username
-                                          "user[password]" password)
-                                   cookie-store)]
-    (if success
+        login-form   (get-heiaheia-login-form cookie-store)
+        response     (submit-heiaheia-login-form (assoc login-form
+                                                        "user[email]" username
+                                                        "user[password]" password)
+                                                 cookie-store)]
+    (if (= (:status response) 302)
       {:token   (get login-form "authenticity_token")
        :cookies cookie-store}
       (throw (Exception. "Incorrect HeiaHeia credentials")))))
+
+;;
+;; Public functions
+;;
+
+(defn create-session
+  [{:keys [username password type] :or {type :heiaheia}}]
+  (case type
+    :heiaheia (create-session-via-form username password)
+    :facebook (create-session-via-facebook username password)
+    (throw (Exception. "Unknown HeiaHeia login type."))))
 
 (defn valid-credentials?
   [username password]

@@ -107,7 +107,7 @@
    :distance       (:distance raw-data)})
 
 (defn create-session
-  [username password]
+  [{:keys [username password]}]
   (let [cookie-store (clj-http.cookies/cookie-store)
         device-info  (create-device-info)
         query-params (merge device-info
