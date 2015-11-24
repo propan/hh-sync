@@ -85,7 +85,7 @@
         h  (/ (- duration lh) 3600)
         lm (mod lh 60)
         m  (/ (- lh lm) 60)]
-    {:h (int h) :m (int m) :s (java.lang.Math/round lm)}))
+    {:h (int h) :m (int m) :s (java.lang.Math/round (* 1.0 lm))}))
 
 (defn- format-date
   [date]

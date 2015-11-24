@@ -9,7 +9,7 @@
 # somewhere on your $PATH, like ~/bin. The rest of hh-sync will be
 # installed upon first run into the ~/.hh-sync/self-installs directory.
 
-export HH_SYNC_VERSION="0.0.5"
+export HH_SYNC_VERSION="0.0.6"
 
 export HH_SYNC_HOME="${HH_SYNC_HOME:-"$HOME/.hh-sync"}"
 
