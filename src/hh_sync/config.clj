@@ -40,8 +40,17 @@
   [config]
   (and (-> config :endomondo :username)
        (-> config :endomondo :password)
-       (-> config :heiaheia :username)
-       (-> config :heiaheia :password)))
+
+       (or (-> config :heiaheia :disabled)
+           (and
+            (-> config :heiaheia :username)
+            (-> config :heiaheia :password)))
+
+       (or (-> config :kilometrikisa :disabled)
+           (and
+            (-> config :kilometrikisa :username)
+            (-> config :kilometrikisa :password)
+            (-> config :kilometrikisa :contest-id)))))
 
 (defn exists?
   []
