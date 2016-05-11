@@ -1,10 +1,10 @@
 # hh-sync
 
-a command-line utility for syncing workouts from Endomondo to HeiaHeia
+a command-line utility for syncing workouts from Endomondo to [HeiaHeia](https://www.heiaheia.com) and [Kilometrikisa](https://www.kilometrikisa.fi)
 
 ## Important!
 
-The unitility does ask you to provide Endomondo and HeiaHeia (or Facebook) credentials. They are sent only to Endomodo and HeiaHeia (or Facebook) using HTTPS connection and stored locally. But, when given, they are stored in plain text in `~/.hh-sync` folder. **Make sure you keep these files safe.**
+The utility asks you to provide credentials to all services it needs to have access to. They are stored locally and sent only to these services using HTTPS connection. But, when given, they are stored in plain text in `~/.hh-sync` folder. **Make sure you keep these files safe.**
 
 ## Good to know
 
@@ -48,7 +48,7 @@ hh-sync upgrade
 
 ## License
 
-Copyright © 2015 Pavel Prokopenko
+Copyright © 2016 Pavel Prokopenko
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
