@@ -111,7 +111,7 @@
     (doseq [[date amount] stats]
       (if-not (kilometrikisa/save-day-stats session date amount)
         (exit 1 (str "Failed to update Kilometrikisa stats for: " date))
-        (println "Synced:" date)))
+        (println "Synced:" date " " amount "km")))
     (set-synced! settings :kilometrikisa last-synced)))
 
 (defn- perform-kilometrikisa-sync
